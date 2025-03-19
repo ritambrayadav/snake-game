@@ -6,7 +6,6 @@ function Register() {
   const [userData, setUserData] = useState({
     name: "",
     email: "",
-    companyName: "",
     password: "",
   });
   const [loading, setLoading] = useState(false);
@@ -61,18 +60,6 @@ function Register() {
               name="email"
               placeholder="Enter your email"
               value={userData.email}
-              onChange={onChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="companyName">Company Name</label>
-            <input
-              type="text"
-              id="companyName"
-              name="companyName"
-              placeholder="Enter your company name"
-              value={userData.companyName}
               onChange={onChange}
               required
             />
