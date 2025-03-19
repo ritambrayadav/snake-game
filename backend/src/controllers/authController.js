@@ -1,42 +1,27 @@
 import User from "../models/User.js";
-import Company from "../models/Company.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import { v4 as uuidv4 } from "uuid";
 
 const register = asyncHandler(async (req, res) => {
-  const { name, email, password, companyName } = req.body;
+  const { name, email, password } = req.body;
 
   const existingUser = await User.scan("email").eq(email).exec();
   if (existingUser.length > 0) {
     return res.status(400).json({ message: "User already exists" });
   }
-
-  const existingCompany = await Company.scan("name").eq(companyName).exec();
-  if (existingCompany.length > 0) {
-    return res.status(400).json({ message: "Company already exists" });
-  }
-
-  const companyId = uuidv4();
-  const company = new Company({
-    id: companyId,
-    name: companyName,
-    createdAt: new Date(),
-  });
-  await company.save();
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = new User({
     id: uuidv4(),
     name,
     email,
     password: hashedPassword,
-    companyId,
   });
   await user.save();
   res.status(201).json({
-    message: "User and company created successfully",
-    user: { name, email, companyName },
+    message: "User created successfully",
+    user: { name, email },
   });
 });
 
