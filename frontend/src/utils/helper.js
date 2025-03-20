@@ -12,3 +12,6 @@ export const checkCollision = (head, snake) => {
     snake.some((segment) => segment.x === head.x && segment.y === head.y) // Self-collision
   );
 };
+export const checkWallCollision = (head, gridSize) => {
+  return head.x < 0 || head.x >= gridSize || head.y < 0 || head.y >= gridSize;
+};

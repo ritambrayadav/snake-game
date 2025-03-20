@@ -1,20 +1,30 @@
 import { useEffect } from "react";
 import { useGame } from "../context/gameContext";
-import { getRandomPosition, checkCollision } from "../utils/helper"
+import { getRandomPosition, checkCollision } from "../utils/helper";
 
 const GRID_SIZE = 20;
 
 const useGameLogic = () => {
   const {
+    sessionId,
     snake,
     setSnake,
     food,
     setFood,
     direction,
     setDirection,
+    isGameOver,
     setIsGameOver,
     setScore,
+    loadGameSession,
+    saveGameSession,
   } = useGame();
+
+  useEffect(() => {
+    if (sessionId) {
+      loadGameSession(sessionId);
+    }
+  }, [loadGameSession, sessionId]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -33,7 +43,7 @@ const useGameLogic = () => {
   }, []);
 
   useEffect(() => {
-    if (!snake.length) return;
+    if (!snake.length || isGameOver) return;
 
     const moveSnake = () => {
       const newSnake = [...snake];
@@ -55,9 +65,15 @@ const useGameLogic = () => {
         default:
           return;
       }
-
-      if (checkCollision(head, newSnake)) {
+      if (
+        checkCollision(head, newSnake) ||
+        head.x < 0 ||
+        head.x >= GRID_SIZE ||
+        head.y < 0 ||
+        head.y >= GRID_SIZE
+      ) {
         setIsGameOver(true);
+        saveGameSession();
         return;
       }
 
@@ -71,11 +87,23 @@ const useGameLogic = () => {
       }
 
       setSnake(newSnake);
+      saveGameSession();
     };
 
     const interval = setInterval(moveSnake, 100);
     return () => clearInterval(interval);
-  }, [snake, direction]);
+  }, [
+    snake,
+    direction,
+    isGameOver,
+    food.x,
+    food.y,
+    setSnake,
+    saveGameSession,
+    setIsGameOver,
+    setScore,
+    setFood,
+  ]);
 
   return {};
 };

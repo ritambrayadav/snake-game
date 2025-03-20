@@ -1,4 +1,4 @@
-import User from "../models/Users.js"
+import User from "../models/Users.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
@@ -40,7 +40,7 @@ const login = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Invalid credentials" });
   }
 
-  const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+  const token = jwt.sign({ id: user.id, user }, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });
 
@@ -49,17 +49,17 @@ const login = asyncHandler(async (req, res) => {
 
 const getUserById = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-
+  console.log(req.params, userId, "userid");
   if (!userId) {
     return res.status(400).json({ message: "User ID is required" });
   }
 
-  const users = await User.scan("id").eq(userId).exec();
+  const users = await User.scan("userId").eq(userId).exec();
   if (users.length === 0) {
     return res.status(404).json({ message: "User not found" });
   }
 
-  const { password, ...userData } = users[0];
+  const { ...userData } = users[0];
   res.status(200).json({ user: userData });
 });
 

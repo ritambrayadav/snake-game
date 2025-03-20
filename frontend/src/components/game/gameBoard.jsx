@@ -1,14 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useGame } from "../../context/gameContext";
 import useGameLogic from "../../hooks/useGameLogic";
 import Snake from "./Snake";
 import Food from "./Food";
-import Scoreboard from "./Scoreboard"; 
+import Scoreboard from "./Scoreboard";
 import { Box } from "@mui/material";
+import { useParams } from "react-router-dom";
 
 const GameBoard = () => {
+  const { sessionId } = useParams();
+  const { setSessionId, loadGameSession, isGameOver } = useGame();
+
+  useEffect(() => {
+    if (sessionId) {
+      setSessionId(sessionId);
+      loadGameSession(sessionId);
+    }
+  }, [sessionId]);
+
   useGameLogic();
-  const { isGameOver } = useGame();
+  useGameLogic();
 
   return (
     <Box

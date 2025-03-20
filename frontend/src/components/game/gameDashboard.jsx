@@ -1,45 +1,48 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, Typography, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-// import { getScoreboard, checkActiveSession } from "../api/gameApi";
 import Scoreboard from "../game/scoreBoard";
-// import { useAuth } from "../context/AuthContext";
 import { startGame } from "../../api/game";
-
+import { useGame } from "../../context/gameContext";
+import { getUserById } from "../../api/users";
 const GameDashboard = () => {
-  // const { user } = useAuth();
+  const userId = JSON.parse(sessionStorage.getItem("user"))?.userId;
   const navigate = useNavigate();
-  // const [loading, setLoading] = useState(true);
-  const [activeSession, setActiveSession] = useState(null);
-  // const [scores, setScores] = useState([]);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     if (user) {
-  //       const session = await checkActiveSession(user.userId);
-  //       setActiveSession(session && !session.isGameOver ? session : null);
-  //     }
-  //     const scoresData = await getScoreboard();
-  //     setScores(scoresData);
-  //     setLoading(false);
-  //   };
-  //   fetchData();
-  // }, [user]);
+  const { setSessionId } = useGame();
+  const [lastActiveSessionId, setLastActiveSessionId] = useState(null);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userData = await getUserById(userId);
+        if (userData?.lastActiveSessionId) {
+          setLastActiveSessionId(userData.lastActiveSessionId);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+    fetchUserData();
+  }, []);
 
   const handleNewGame = async () => {
-    navigate("/game");
-    await startGame();
-  };
-
-  const handleResumeGame = () => {
-    if (activeSession) {
-      navigate("/game");
+    try {
+      const response = await startGame();
+      if (response?.sessionId) {
+        setSessionId(response.sessionId);
+        navigate(`/game/${response.sessionId}`);
+      } else {
+        console.error("Failed to get sessionId from startGame API");
+      }
+    } catch (error) {
+      console.error("Error starting new game:", error);
     }
   };
 
-  // if (loading) {
-  //   return <CircularProgress />;
-  // }
+  const handleResumeGame = () => {
+    if (lastActiveSessionId) {
+      navigate(`/game/${lastActiveSessionId}`);
+    }
+  };
 
   return (
     <Box sx={{ maxWidth: 600, mx: "auto", textAlign: "center", mt: 4 }}>
@@ -47,7 +50,7 @@ const GameDashboard = () => {
         Snake Game Dashboard
       </Typography>
 
-      {activeSession && (
+      {lastActiveSessionId && (
         <Button
           variant="contained"
           color="primary"

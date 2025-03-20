@@ -17,9 +17,8 @@ export const UserProvider = ({ children }) => {
       const { token } = response;
 
       const decodedUser = jwtDecode(token);
-
       sessionStorage.setItem("token", token);
-      sessionStorage.setItem("user", JSON.stringify(decodedUser));
+      sessionStorage.setItem("user", JSON.stringify(decodedUser.user));
       setUser(decodedUser);
     } catch (error) {
       setError(error.message);
