@@ -1,5 +1,6 @@
 import { GameSession } from "../models/Game.js";
 import User from "../models/Users.js";
+import { Scoreboard } from "../models/Score.js";
 import { v4 as uuidv4 } from "uuid";
 
 export const startNewGame = async (req, res) => {
@@ -30,8 +31,15 @@ export const startNewGame = async (req, res) => {
 };
 export const updateGameSession = async (req, res) => {
   try {
-    const { userId, sessionId, snakeState, foodPosition, score, isGameOver } =
-      req.body;
+    const {
+      userName,
+      userId,
+      sessionId,
+      snakeState,
+      foodPosition,
+      score,
+      isGameOver,
+    } = req.body;
     let gameSession = await GameSession.get(sessionId);
     if (!gameSession) {
       return res.status(404).json({ message: "Game session not found" });
@@ -42,7 +50,17 @@ export const updateGameSession = async (req, res) => {
     gameSession.isGameOver = isGameOver;
     await gameSession.save();
     if (isGameOver) {
-      await User.update({ userId }, { $REMOVE: ["lastActiveSessionId"] }); // ✅ Removes the field
+      await User.update({ userId }, { $REMOVE: ["lastActiveSessionId"] });
+      const existingScore = await Scoreboard.get(userId);
+      if (!existingScore) {
+        await Scoreboard.create({
+          userId,
+          playerName: userName,
+          topScore: score,
+        });
+      } else if (score > existingScore.topScore) {
+        await Scoreboard.update({ userId }, { topScore: score });
+      }
     }
     return res
       .status(200)

@@ -1,27 +1,14 @@
 import dynamoose from "dynamoose";
 
-const ScoreSchema = new dynamoose.Schema(
+const scoreboardSchema = new dynamoose.Schema(
   {
-    id: {
-      type: String,
-      hashKey: true,
-    },
-    userId: {
-      type: String,
-      required: true,
-    },
-    score: {
-      type: Number,
-      required: true,
-    },
-    createdAt: {
-      type: Date,
-      default: () => new Date(),
-    },
+    userId: { type: String, hashKey: true },
+    playerName: { type: String },
+    topScore: { type: Number, default: 0 },
   },
   {
     timestamps: true,
   }
 );
 
-export const Score = dynamoose.model("Scores", ScoreSchema);
+export const Scoreboard = dynamoose.model("Scores", scoreboardSchema);

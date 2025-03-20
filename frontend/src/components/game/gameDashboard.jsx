@@ -5,6 +5,7 @@ import Scoreboard from "../game/scoreBoard";
 import { startGame } from "../../api/game";
 import { useGame } from "../../context/gameContext";
 import { getUserById } from "../../api/users";
+import TopScoreBoard from "./topScoresBoard";
 const GameDashboard = () => {
   const userId = JSON.parse(sessionStorage.getItem("user"))?.userId;
   const navigate = useNavigate();
@@ -68,8 +69,7 @@ const GameDashboard = () => {
       >
         Start New Game
       </Button>
-
-      <Scoreboard />
+      <TopScoreBoard />
     </Box>
   );
 };

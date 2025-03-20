@@ -9,7 +9,9 @@ export const GameProvider = ({ children }) => {
   const [isGameOver, setIsGameOver] = useState(false);
   const [score, setScore] = useState(0);
   const [sessionId, setSessionId] = useState(null);
-  const userId = JSON.parse(sessionStorage.getItem("user"))?.userId;
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const userId = user?.userId;
+  const userName = user?.userName;
 
   const loadGameSession = async (sessionId) => {
     const session = await getGameState(sessionId);
@@ -25,6 +27,7 @@ export const GameProvider = ({ children }) => {
   const saveGameSession = async (gameOverState = isGameOver) => {
     if (sessionId) {
       await updateGameState({
+        userName,
         userId,
         sessionId,
         snakeState: snake,
