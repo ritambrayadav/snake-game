@@ -2,11 +2,11 @@ import dynamoose from "dynamoose";
 
 const userSchema = new dynamoose.Schema(
   {
-    userId: { type: String, required: true },
+    userId: { type: String, hashKey: true, required: true },
     userName: { type: String, required: true },
-    email: { type: String, hashKey: true, required: true },
+    email: { type: String, required: true },
     password: { type: String, required: true },
-    lastActiveSessionId: { type: String },
+    lastActiveSessionId: { type: String, required: false },
   },
   { timestamps: true }
 );

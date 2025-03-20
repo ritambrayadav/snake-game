@@ -26,7 +26,7 @@ const GameDashboard = () => {
 
   const handleNewGame = async () => {
     try {
-      const response = await startGame();
+      const response = await startGame(userId);
       if (response?.sessionId) {
         setSessionId(response.sessionId);
         navigate(`/game/${response.sessionId}`);

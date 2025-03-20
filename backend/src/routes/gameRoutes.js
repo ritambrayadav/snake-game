@@ -8,7 +8,7 @@ import {
 
 const router = express.Router();
 
-router.post("/", startNewGame);
+router.post("/:userId", startNewGame);
 router.put("/", updateGameSession);
 router.get("/:sessionId", getGameSession);
 

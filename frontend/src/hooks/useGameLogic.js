@@ -24,8 +24,12 @@ const useGameLogic = () => {
     if (sessionId) {
       loadGameSession(sessionId);
     }
-  }, [loadGameSession, sessionId]);
-
+  }, [sessionId]);
+  useEffect(() => {
+    if (isGameOver) {
+      saveGameSession();
+    }
+  }, [isGameOver]);
   useEffect(() => {
     const handleKeyDown = (event) => {
       const key = event.key;
@@ -65,6 +69,7 @@ const useGameLogic = () => {
         default:
           return;
       }
+
       if (
         checkCollision(head, newSnake) ||
         head.x < 0 ||
@@ -73,7 +78,8 @@ const useGameLogic = () => {
         head.y >= GRID_SIZE
       ) {
         setIsGameOver(true);
-        saveGameSession();
+        loadGameSession(sessionId);
+        setTimeout(() => saveGameSession(true), 0);
         return;
       }
 
@@ -87,7 +93,6 @@ const useGameLogic = () => {
       }
 
       setSnake(newSnake);
-      saveGameSession();
     };
 
     const interval = setInterval(moveSnake, 100);
@@ -99,7 +104,6 @@ const useGameLogic = () => {
     food.x,
     food.y,
     setSnake,
-    saveGameSession,
     setIsGameOver,
     setScore,
     setFood,

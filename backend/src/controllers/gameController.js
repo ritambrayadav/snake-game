@@ -3,11 +3,12 @@ import User from "../models/Users.js";
 import { v4 as uuidv4 } from "uuid";
 
 export const startNewGame = async (req, res) => {
-  const { userId } = req.body;
-
+  const { userId } = req.params;
+  const sessionId = uuidv4();
+  console.log(userId, "");
   try {
     const newSession = new GameSession({
-      sessionId: uuidv4(),
+      sessionId,
       userId,
       snakeState: [{ x: 10, y: 10 }],
       foodPosition: {
@@ -19,6 +20,7 @@ export const startNewGame = async (req, res) => {
     });
 
     await newSession.save();
+    console.log({ userId }, { lastActiveSessionId: sessionId });
     await User.update({ userId }, { lastActiveSessionId: sessionId });
     return res.status(201).json(newSession);
   } catch (error) {
@@ -28,10 +30,9 @@ export const startNewGame = async (req, res) => {
 };
 export const updateGameSession = async (req, res) => {
   try {
-    const { sessionId, snakeState, foodPosition, score, isGameOver } = req.body;
-
+    const { userId, sessionId, snakeState, foodPosition, score, isGameOver } =
+      req.body;
     let gameSession = await GameSession.get(sessionId);
-
     if (!gameSession) {
       return res.status(404).json({ message: "Game session not found" });
     }
@@ -39,9 +40,10 @@ export const updateGameSession = async (req, res) => {
     gameSession.score = score;
     gameSession.foodPosition = foodPosition;
     gameSession.isGameOver = isGameOver;
-
     await gameSession.save();
-
+    if (isGameOver) {
+      await User.update({ userId }, { $REMOVE: ["lastActiveSessionId"] }); // ✅ Removes the field
+    }
     return res
       .status(200)
       .json({ message: "Game state updated successfully", gameSession });

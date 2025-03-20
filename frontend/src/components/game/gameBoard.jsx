@@ -17,8 +17,6 @@ const GameBoard = () => {
       loadGameSession(sessionId);
     }
   }, [sessionId]);
-
-  useGameLogic();
   useGameLogic();
 
   return (

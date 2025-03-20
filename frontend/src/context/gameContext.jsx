@@ -5,12 +5,14 @@ const GameContext = createContext();
 export const GameProvider = ({ children }) => {
   const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
   const [food, setFood] = useState({ x: 5, y: 5 });
-  const [direction, setDirection] = useState("RIGHT");
+  const [direction, setDirection] = useState("");
   const [isGameOver, setIsGameOver] = useState(false);
   const [score, setScore] = useState(0);
   const [sessionId, setSessionId] = useState(null);
-  const loadGameSession = async (id) => {
-    const session = await getGameState(id);
+  const userId = JSON.parse(sessionStorage.getItem("user"))?.userId;
+
+  const loadGameSession = async (sessionId) => {
+    const session = await getGameState(sessionId);
     if (session) {
       setSnake(session.snakeState);
       setFood(session.foodPosition);
@@ -20,13 +22,15 @@ export const GameProvider = ({ children }) => {
     }
   };
 
-  const saveGameSession = async () => {
+  const saveGameSession = async (gameOverState = isGameOver) => {
     if (sessionId) {
-      await updateGameState(sessionId, {
+      await updateGameState({
+        userId,
+        sessionId,
         snakeState: snake,
         foodPosition: food,
         score,
-        isGameOver,
+        isGameOver: gameOverState,
       });
     }
   };
