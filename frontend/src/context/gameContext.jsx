@@ -3,15 +3,26 @@ import { createContext, useContext, useState } from "react";
 const GameContext = createContext();
 
 export const GameProvider = ({ children }) => {
-  const [snake, setSnake] = useState([{ x: 5, y: 5 }]);
-  const [food, setFood] = useState();
+  const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
+  const [food, setFood] = useState({ x: 5, y: 5 });
   const [direction, setDirection] = useState("RIGHT");
   const [isGameOver, setIsGameOver] = useState(false);
   const [score, setScore] = useState(0);
 
   return (
     <GameContext.Provider
-      value={{ snake, setSnake, food, setFood, direction, setDirection, isGameOver, setIsGameOver, score, setScore }}
+      value={{
+        snake,
+        setSnake,
+        food,
+        setFood,
+        direction,
+        setDirection,
+        isGameOver,
+        setIsGameOver,
+        score,
+        setScore,
+      }}
     >
       {children}
     </GameContext.Provider>
