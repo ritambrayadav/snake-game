@@ -15,7 +15,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 const Register = () => {
   const [userData, setUserData] = useState({
-    name: "",
+    userName: "",
     email: "",
     password: "",
   });
@@ -36,7 +36,7 @@ const Register = () => {
     setError(null);
     try {
       await registerUser(userData);
-      setUserData({ name: "", email: "", password: "" });
+      setUserData({ userName: "", email: "", password: "" });
       navigate("/");
     } catch (err) {
       setError(err.message);
@@ -86,8 +86,8 @@ const Register = () => {
           <TextField
             label="Name"
             type="text"
-            name="name"
-            value={userData.name}
+            name="userName"
+            value={userData.userName}
             onChange={onChange}
             required
             fullWidth

@@ -1,4 +1,4 @@
-const dynamoose = require("dynamoose");
+import dynamoose from "dynamoose";
 
 const ScoreSchema = new dynamoose.Schema(
   {
@@ -24,5 +24,4 @@ const ScoreSchema = new dynamoose.Schema(
   }
 );
 
-const Score = dynamoose.model("Scores", ScoreSchema);
-module.exports = Score;
+export const Score = dynamoose.model("Scores", ScoreSchema);

@@ -3,7 +3,7 @@ import { useGame } from "../../context/gameContext";
 import useGameLogic from "../../hooks/useGameLogic";
 import Snake from "./Snake";
 import Food from "./Food";
-import Scoreboard from "./Scoreboard"; // Import Scoreboard
+import Scoreboard from "./Scoreboard"; 
 import { Box } from "@mui/material";
 
 const GameBoard = () => {

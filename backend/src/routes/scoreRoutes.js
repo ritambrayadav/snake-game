@@ -1,14 +1,15 @@
-const express = require("express");
-const { v4: uuidv4 } = require("uuid");
-const Score = require("../models/Score");
+import express from "express";
+import { v4 as uuidv4 } from "uuid";
+import Score from "../models/Score.js"; // Ensure .js extension is included
 
 const router = express.Router();
 
 router.post("/save", async (req, res) => {
   try {
     const { userId, score } = req.body;
-    if (!userId || score == null)
+    if (!userId || score == null) {
       return res.status(400).json({ error: "User ID and score are required" });
+    }
 
     const newScore = new Score({ id: uuidv4(), userId, score });
     await newScore.save();
@@ -22,11 +23,11 @@ router.post("/save", async (req, res) => {
 router.get("/leaderboard", async (req, res) => {
   try {
     const scores = await Score.scan().exec();
-    scores.sort((a, b) => b.score - a.score); 
+    scores.sort((a, b) => b.score - a.score);
     res.json(scores.slice(0, 10));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-module.exports = router;
+export default router;
