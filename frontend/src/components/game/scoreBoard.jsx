@@ -6,7 +6,7 @@ import { useTheme } from "@mui/material/styles";
 const Scoreboard = () => {
   const theme = useTheme();
   const { score } = useGame();
-
+  console.log(score,"score")
   return (
     <Box sx={styles.container(theme)}>
       <Typography variant="h6">Score: {score}</Typography>

@@ -6,7 +6,7 @@ import { useTheme } from "@mui/material/styles";
 const Snake = () => {
   const theme = useTheme();
   const { snake } = useGame();
-
+  console.log(snake,"snake")
   return (
     <>
       {snake.map((segment, index) => (

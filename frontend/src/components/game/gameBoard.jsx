@@ -1,29 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect} from "react";
 import { useGame } from "../../context/gameContext";
 import useGameLogic from "../../hooks/useGameLogic";
 import Snake from "./Snake";
 import Food from "./Food";
 import Scoreboard from "./Scoreboard";
-import {
-  Box,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Typography,
-} from "@mui/material";
+import { Box } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import { startGame } from "../../api/game";
 import { getUserFromSession } from "../../utils/helper";
 import { useTheme } from "@mui/material/styles";
-
+import GameOverModal from "./gameOver";
 const GameBoard = () => {
   const theme = useTheme();
   const { sessionId } = useParams();
-  const { setSessionId, loadGameSession, isGameOver } = useGame();
+  const { setSessionId, loadGameSession, openModal, setOpenModal, resetGame } =
+    useGame();
   const navigate = useNavigate();
-  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     if (sessionId) {
@@ -31,12 +23,6 @@ const GameBoard = () => {
       loadGameSession(sessionId);
     }
   }, [sessionId]);
-
-  useEffect(() => {
-    if (isGameOver) {
-      setOpenModal(true);
-    }
-  }, [isGameOver]);
 
   useGameLogic();
 
@@ -47,6 +33,7 @@ const GameBoard = () => {
     try {
       const response = await startGame(userId);
       if (response?.sessionId) {
+        resetGame();
         setOpenModal(false);
         setSessionId(response.sessionId);
         navigate(`/game/${response.sessionId}`);
@@ -57,7 +44,7 @@ const GameBoard = () => {
       console.error("Error starting new game:", error);
     }
   };
-
+  console.log();
   return (
     <Box sx={styles.container}>
       <Scoreboard />
@@ -66,29 +53,11 @@ const GameBoard = () => {
         <Food />
       </Box>
 
-      <Dialog open={openModal} onClose={() => setOpenModal(false)}>
-        <DialogTitle sx={styles.dialogTitle}>Game Over!</DialogTitle>
-        <DialogContent>
-          <Typography variant="h6" textAlign="center">
-            Oops! You lost the game. Try again?
-          </Typography>
-        </DialogContent>
-        <DialogActions sx={styles.dialogActions}>
-          <Button variant="contained" color="primary" onClick={handleRestart}>
-            Restart Game
-          </Button>
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={() => {
-              setOpenModal(false);
-              navigate("/dashboard");
-            }}
-          >
-            Back to Dashboard
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <GameOverModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onRestart={handleRestart}
+      />
     </Box>
   );
 };

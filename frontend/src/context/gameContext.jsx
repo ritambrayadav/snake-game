@@ -11,6 +11,7 @@ export const GameProvider = ({ children }) => {
   const [sessionId, setSessionId] = useState(null);
   const userId = getUserFromSession()?.userId;
   const userName = getUserFromSession()?.userName;
+  const [openModal, setOpenModal] = useState(false);
   const loadGameSession = async (sessionId) => {
     const session = await getGameState(sessionId);
     if (session) {
@@ -35,6 +36,16 @@ export const GameProvider = ({ children }) => {
       });
     }
   };
+  const resetGame = () => {
+    setSnake([{ x: 10, y: 10 }]);
+    setFood({ x: 5, y: 5 });
+    setDirection("");
+    setIsGameOver(false);
+    setScore(0);
+    setSessionId(null);
+    setOpenModal(false);
+  };
+
   return (
     <GameContext.Provider
       value={{
@@ -52,6 +63,9 @@ export const GameProvider = ({ children }) => {
         setSessionId,
         loadGameSession,
         saveGameSession,
+        openModal,
+        setOpenModal,
+        resetGame
       }}
     >
       {children}

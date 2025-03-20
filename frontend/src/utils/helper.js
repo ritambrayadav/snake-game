@@ -24,3 +24,4 @@ export const getUserFromSession = () => {
     return null;
   }
 };
+

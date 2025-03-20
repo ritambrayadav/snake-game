@@ -38,6 +38,7 @@ export const updateGameSession = async (req, res) => {
       score,
       isGameOver,
     } = req.body;
+
     let gameSession = await GameSession.get(sessionId);
     if (!gameSession) {
       return res.status(404).json({ message: "Game session not found" });
@@ -48,17 +49,22 @@ export const updateGameSession = async (req, res) => {
     gameSession.isGameOver = isGameOver;
     await gameSession.save();
     if (isGameOver) {
-      const topScore = {
-        userId,
-        playerName: userName,
-        topScore: score,
-      };
       await User.update({ userId }, { $REMOVE: ["lastActiveSessionId"] });
       const existingScore = await Scoreboard.get(userId);
       if (!existingScore) {
-        await Scoreboard.create(topScore);
-      } else if (score >= existingScore.topScore) {
-        await Scoreboard.update({ userId }, { ...topScore });
+        await Scoreboard.create({
+          userId,
+          playerName: userName,
+          topScore: score,
+        });
+      } else if (score > existingScore.topScore) {
+        await Scoreboard.update(
+          { userId },
+          {
+            playerName: userName,
+            topScore: score,
+          }
+        );
       }
     }
     return res

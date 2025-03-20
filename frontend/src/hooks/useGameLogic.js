@@ -18,6 +18,7 @@ const useGameLogic = () => {
     setScore,
     loadGameSession,
     saveGameSession,
+    setOpenModal,
   } = useGame();
 
   useEffect(() => {
@@ -78,6 +79,7 @@ const useGameLogic = () => {
         head.y >= GRID_SIZE
       ) {
         setIsGameOver(true);
+        setOpenModal(true);
         loadGameSession(sessionId);
         setTimeout(() => saveGameSession(true), 0);
         return;
