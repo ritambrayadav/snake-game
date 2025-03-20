@@ -22,6 +22,8 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const onChange = (e) => {
     setUserData((prev) => ({
@@ -45,44 +47,20 @@ const Register = () => {
     }
   };
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
   return (
-    <Container
-      maxWidth="xs"
-      sx={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <Paper
-        elevation={6}
-        sx={{
-          p: 4,
-          width: isMobile ? "90%" : "100%",
-          borderRadius: 3,
-          textAlign: "center",
-          backgroundColor: theme.palette.background.default,
-        }}
-      >
+    <Container maxWidth="xs" sx={styles.container}>
+      <Paper elevation={6} sx={styles.paper(isMobile, theme)}>
         <Typography variant="h4" fontWeight="bold" gutterBottom>
           Register
         </Typography>
 
         {error && (
-          <Typography color="error" sx={{ mt: 1, mb: 1 }}>
+          <Typography color="error" sx={styles.errorText}>
             {error}
           </Typography>
         )}
 
-        <Box
-          component="form"
-          onSubmit={handleOnSubmit}
-          sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 2 }}
-        >
+        <Box component="form" onSubmit={handleOnSubmit} sx={styles.form}>
           <TextField
             label="Name"
             type="text"
@@ -123,7 +101,7 @@ const Register = () => {
             size="large"
             fullWidth
             disabled={loading}
-            sx={{ mt: 2 }}
+            sx={styles.button}
           >
             {loading ? (
               <CircularProgress size={24} color="inherit" />
@@ -133,12 +111,44 @@ const Register = () => {
           </Button>
         </Box>
 
-        <Typography sx={{ mt: 2 }}>
+        <Typography sx={styles.loginText}>
           Already have an account? <Link to="/">Login Here</Link>
         </Typography>
       </Paper>
     </Container>
   );
+};
+
+const styles = {
+  container: {
+    minHeight: "100vh",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  paper: (isMobile, theme) => ({
+    p: 4,
+    width: isMobile ? "90%" : "100%",
+    borderRadius: 3,
+    textAlign: "center",
+    backgroundColor: theme.palette.background.default,
+  }),
+  form: {
+    mt: 2,
+    display: "flex",
+    flexDirection: "column",
+    gap: 2,
+  },
+  button: {
+    mt: 2,
+  },
+  errorText: {
+    mt: 1,
+    mb: 1,
+  },
+  loginText: {
+    mt: 2,
+  },
 };
 
 export default Register;

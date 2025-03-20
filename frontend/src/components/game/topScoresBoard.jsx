@@ -12,7 +12,10 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { getTopScores } from "../../api/score";
+import { useTheme } from "@mui/material/styles";
+
 const TopScoreBoard = () => {
+  const theme = useTheme();
   const [scores, setScores] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -32,27 +35,21 @@ const TopScoreBoard = () => {
   }, []);
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4 }}>
-      <Typography variant="h4" align="center" gutterBottom>
-        🏆 TopScoreBoard
+    <Container maxWidth="sm" sx={styles.container}>
+      <Typography variant="h5" align="center" gutterBottom>
+        🏆 Top Score Board
       </Typography>
 
       {loading ? (
-        <CircularProgress sx={{ display: "block", margin: "auto" }} />
+        <CircularProgress sx={styles.loader} />
       ) : (
-        <TableContainer component={Paper} sx={{ boxShadow: 3 }}>
+        <TableContainer component={Paper} sx={styles.tableContainer(theme)}>
           <Table>
             <TableHead>
-              <TableRow sx={{ backgroundColor: "#1976d2" }}>
-                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                  Rank
-                </TableCell>
-                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                  Player
-                </TableCell>
-                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                  Score
-                </TableCell>
+              <TableRow sx={styles.headerRow(theme)}>
+                <TableCell sx={styles.headerCell}>Rank</TableCell>
+                <TableCell sx={styles.headerCell}>Player</TableCell>
+                <TableCell sx={styles.headerCell}>Score</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -64,12 +61,7 @@ const TopScoreBoard = () => {
                 </TableRow>
               ) : (
                 scores.map((score, index) => (
-                  <TableRow
-                    key={score.userId}
-                    sx={{
-                      "&:nth-of-type(odd)": { backgroundColor: "#f5f5f5" },
-                    }}
-                  >
+                  <TableRow key={score.userId} sx={styles.row(index)}>
                     <TableCell>{index + 1}</TableCell>
                     <TableCell>{score.playerName}</TableCell>
                     <TableCell>{score.topScore}</TableCell>
@@ -82,6 +74,24 @@ const TopScoreBoard = () => {
       )}
     </Container>
   );
+};
+
+const styles = {
+  container: { mt: 4 },
+  loader: { display: "block", margin: "auto" },
+  tableContainer: (theme) => ({
+    boxShadow: theme.shadows[3],
+  }),
+  headerRow: (theme) => ({
+    backgroundColor: theme.palette.primary.main,
+  }),
+  headerCell: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  row: () => ({
+    "&:nth-of-type(odd)": { backgroundColor: "#f5f5f5" },
+  }),
 };
 
 export default TopScoreBoard;

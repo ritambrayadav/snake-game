@@ -1,5 +1,4 @@
 import axios from "axios";
-
 const path = "http://localhost:8000";
 
 const apiClient = axios.create({
@@ -28,7 +27,6 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401 || error.response?.status === 403) {
       console.log("Authentication error,check user is logided ");
       sessionStorage.clear();
-      
       window.location.href = "/";
     }
     return Promise.reject(error);

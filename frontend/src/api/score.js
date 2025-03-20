@@ -7,7 +7,7 @@ export const getTopScores = async () => {
     return response?.data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || "Error fetching user data"
+      error.response?.data?.message || "Error fetching top user data"
     );
   }
 };

@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from "react";
 import { updateGameState, getGameState } from "../api/game.js";
 const GameContext = createContext();
-
+import { getUserFromSession } from "../utils/helper.js";
 export const GameProvider = ({ children }) => {
   const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
   const [food, setFood] = useState({ x: 5, y: 5 });
@@ -9,10 +9,8 @@ export const GameProvider = ({ children }) => {
   const [isGameOver, setIsGameOver] = useState(false);
   const [score, setScore] = useState(0);
   const [sessionId, setSessionId] = useState(null);
-  const user = JSON.parse(sessionStorage.getItem("user"));
-  const userId = user?.userId;
-  const userName = user?.userName;
-
+  const userId = getUserFromSession()?.userId;
+  const userName = getUserFromSession()?.userName;
   const loadGameSession = async (sessionId) => {
     const session = await getGameState(sessionId);
     if (session) {

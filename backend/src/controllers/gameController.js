@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from "uuid";
 export const startNewGame = async (req, res) => {
   const { userId } = req.params;
   const sessionId = uuidv4();
-  console.log(userId, "");
   try {
     const newSession = new GameSession({
       sessionId,
@@ -21,7 +20,6 @@ export const startNewGame = async (req, res) => {
     });
 
     await newSession.save();
-    console.log({ userId }, { lastActiveSessionId: sessionId });
     await User.update({ userId }, { lastActiveSessionId: sessionId });
     return res.status(201).json(newSession);
   } catch (error) {
@@ -50,16 +48,17 @@ export const updateGameSession = async (req, res) => {
     gameSession.isGameOver = isGameOver;
     await gameSession.save();
     if (isGameOver) {
+      const topScore = {
+        userId,
+        playerName: userName,
+        topScore: score,
+      };
       await User.update({ userId }, { $REMOVE: ["lastActiveSessionId"] });
       const existingScore = await Scoreboard.get(userId);
       if (!existingScore) {
-        await Scoreboard.create({
-          userId,
-          playerName: userName,
-          topScore: score,
-        });
-      } else if (score > existingScore.topScore) {
-        await Scoreboard.update({ userId }, { topScore: score });
+        await Scoreboard.create(topScore);
+      } else if (score >= existingScore.topScore) {
+        await Scoreboard.update({ userId }, { ...topScore });
       }
     }
     return res
@@ -73,13 +72,10 @@ export const updateGameSession = async (req, res) => {
 export const getGameSession = async (req, res) => {
   try {
     const { sessionId } = req.params;
-
     const gameSession = await GameSession.get(sessionId);
-
     if (!gameSession) {
       return res.status(404).json({ message: "Game session not found" });
     }
-
     return res.status(200).json(gameSession);
   } catch (error) {
     console.error("Error fetching game session:", error);
