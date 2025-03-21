@@ -5,20 +5,17 @@ import { v4 as uuidv4 } from "uuid";
 
 export const startNewGame = async (req, res) => {
   const { userId } = req.params;
+  const { snake, food } = req.body;
   const sessionId = uuidv4();
   try {
     const newSession = new GameSession({
       sessionId,
       userId,
-      snakeState: [{ x: 10, y: 10 }],
-      foodPosition: {
-        x: Math.floor(Math.random() * 20),
-        y: Math.floor(Math.random() * 20),
-      },
+      snakeState: snake,
+      foodPosition: food,
       score: 0,
       isGameOver: false,
     });
-
     await newSession.save();
     await User.update({ userId }, { lastActiveSessionId: sessionId });
     return res.status(201).json(newSession);

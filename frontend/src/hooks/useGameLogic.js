@@ -81,7 +81,6 @@ const useGameLogic = () => {
         setIsGameOver(true);
         setOpenModal(true);
         loadGameSession(sessionId);
-        setTimeout(() => saveGameSession(true), 0);
         return;
       }
 

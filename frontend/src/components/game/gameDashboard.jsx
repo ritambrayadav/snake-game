@@ -20,7 +20,7 @@ import { useTheme } from "@mui/material/styles";
 const GameDashboard = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { setSessionId } = useGame();
+  const { setSessionId, snake, food } = useGame();
   const userId = getUserFromSession()?.userId;
   const [lastActiveSessionId, setLastActiveSessionId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -43,7 +43,7 @@ const GameDashboard = () => {
 
   const handleNewGame = async () => {
     try {
-      const response = await startGame(userId);
+      const response = await startGame(userId, snake, food);
       if (response?.sessionId) {
         setSessionId(response.sessionId);
         navigate(`/game/${response.sessionId}`);
@@ -129,6 +129,11 @@ const styles = {
     fontSize: "1rem",
     py: 1,
     width: "100%",
+    minWidth: "180px",
+    maxWidth: "200px",
+    minHeight: "50px",
+    whiteSpace: "nowrap",
+    textAlign: "center",
   },
 };
 

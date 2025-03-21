@@ -1,4 +1,4 @@
-import React, { useEffect} from "react";
+import React, { useEffect } from "react";
 import { useGame } from "../../context/gameContext";
 import useGameLogic from "../../hooks/useGameLogic";
 import Snake from "./Snake";
@@ -29,9 +29,11 @@ const GameBoard = () => {
   const handleRestart = async () => {
     const userId = getUserFromSession()?.userId;
     if (!userId) return;
-
     try {
-      const response = await startGame(userId);
+      const response = await startGame(userId, [{ x: 10, y: 10 }], {
+        x: Math.floor(Math.random() * 20),
+        y: Math.floor(Math.random() * 20),
+      });
       if (response?.sessionId) {
         resetGame();
         setOpenModal(false);

@@ -1,8 +1,8 @@
 import apiClient from "./api";
 const path = "/api/game";
-export const startGame = async (userId) => {
+export const startGame = async (userId, snake, food) => {
   try {
-    const response = await apiClient.post(`${path}/${userId}`);
+    const response = await apiClient.post(`${path}/${userId}`, { snake, food });
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Error starting the game");
@@ -17,9 +17,8 @@ export const updateGameState = async (gameState) => {
 };
 export const getGameState = async (sessionId) => {
   try {
-    const response= await apiClient.get(`${path}/${sessionId}`);
-    return response?.data
-
+    const response = await apiClient.get(`${path}/${sessionId}`);
+    return response?.data;
   } catch (error) {
     console.error("Error getting game state:", error);
   }
